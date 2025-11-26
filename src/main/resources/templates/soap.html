@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>MNB Árfolyamok</title>
+    <style>
+        body { font-family: Arial; padding: 30px; }
+        h1 { margin-top: 40px; }
+        table { border-collapse: collapse; width: 60%; margin-bottom: 40px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+
+<body>
+
+<h1>Valuták</h1>
+
+<table>
+    <tr><th>Valuta kód</th></tr>
+    <tr th:each="c : ${currencies}">
+        <td th:text="${c}"></td>
+    </tr>
+</table>
+
+
+<h1>Mai árfolyamok</h1>
+
+<table>
+    <tr>
+        <th>Valuta</th>
+        <th>Érték</th>
+        <th>Egység</th>
+    </tr>
+
+    <tr th:each="r : ${rates}">
+        <td th:text="${r.currency}"></td>
+        <td th:text="${r.value}"></td>
+        <td th:text="${r.unit}"></td>
+    </tr>
+</table>
+
+</body>
+</html>
