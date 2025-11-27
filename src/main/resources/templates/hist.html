@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Forex HistÁr (MNB)</title>
+
+    <style>
+        body { background:#edf2f7; font-family:Arial; padding:40px;}
+        .card { background:white; max-width:650px; margin:auto; padding:30px;
+            border-radius:12px; box-shadow:0 10px 20px rgba(0,0,0,.1);}
+        h1 {text-align:center}
+        select,button {width:100%; padding:12px; margin-top:10px}
+        button {background:#28a745; color:white; border:none; font-weight:bold}
+        table {width:100%; margin-top:20px; border-collapse: collapse;}
+        th,td {border-bottom:1px solid #ccc; padding:8px; text-align:center}
+        th {background:#f1f1f1}
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>📊 Forex HistÁr (MNB)</h1>
+
+    <form method="get" action="/hist">
+
+        <label>Instrumentum:</label>
+        <select name="instrument">
+            <option th:each="i : ${instruments}"
+                    th:value="${i}"
+                    th:text="${i}"
+                    th:selected="${i == param.instrument}">
+            </option>
+        </select>
+
+        <label>Granularity:</label>
+        <select name="granularity">
+            <option th:each="g : ${granularities}"
+                    th:value="${g}"
+                    th:text="${g}"
+                    th:selected="${g == param.granularity}">
+            </option>
+        </select>
+
+        <button type="submit">Lekérdezés</button>
+
+    </form>
+
+
+    <table th:if="${history != null}">
+        <tr>
+            <th>Dátum</th>
+            <th>Árfolyam</th>
+        </tr>
+        <tr th:each="row : ${history}">
+            <td th:text="${row.key}"></td>
+            <td th:text="${row.value}"></td>
+        </tr>
+    </table>
+
+</div>
+
+</body>
+</html>

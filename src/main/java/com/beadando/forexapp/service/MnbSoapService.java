@@ -3,13 +3,53 @@ package com.beadando.forexapp.service;
 import com.beadando.forexapp.mnbsoap.MNBArfolyamServiceSoap;
 import com.beadando.forexapp.mnbsoap.MNBArfolyamServiceSoapImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class MnbSoapService {
+
+    private static final String MNB_URL =
+            "https://www.mnb.hu/arfolyamok.asmx/GetExchangeRates" +
+                    "?startDate=%s&endDate=%s&currencyNames=%s";
+
+    public Map<String, Double> getLast10Days(String currency) {
+
+        Map<String, Double> result = new LinkedHashMap<>();
+
+        LocalDate end = LocalDate.now();
+        LocalDate start = end.minusDays(14);
+
+        String startDate = start.toString();
+        String endDate = end.toString();
+
+        // már működő SOAP hívásod:
+        String xml = getRatesByDate(startDate, endDate, currency);
+
+        System.out.println("HIST SOAP XML = " + xml);
+
+        Map<String, Double> parsed = parseRatesFromXml(xml);
+
+        if (parsed.isEmpty()) return result;
+
+        // dátum szerint csökkenő sorrend
+        List<Map.Entry<String, Double>> list = new ArrayList<>(parsed.entrySet());
+        list.sort(Map.Entry.<String, Double>comparingByKey().reversed());
+
+        // első 10 elem
+        int limit = Math.min(10, list.size());
+        for (int i = 0; i < limit; i++) {
+            Map.Entry<String, Double> e = list.get(i);
+            result.put(e.getKey(), e.getValue());
+        }
+
+        return result;
+    }
+
 
     private final MNBArfolyamServiceSoap soapClient;
 
@@ -81,6 +121,20 @@ public class MnbSoapService {
             return null;
         }
     }
+
+    public String getLastNDays(String currency, int days) {
+
+        LocalDate end = LocalDate.now();
+        LocalDate start = end.minusDays(days);
+
+        String startDate = start.toString();
+        String endDate = end.toString();
+
+        System.out.println("MNB HIST SOAP: " + currency + " " + startDate + " -> " + endDate);
+
+        return getRatesByDate(startDate, endDate, currency);
+    }
+
 
     // XML → (dátum -> érték) a grafikonhoz
     public Map<String, Double> parseRatesFromXml(String xml) {
