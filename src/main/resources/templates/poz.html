@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Forex Pozíciók</title>
+    <style>
+        body { background:#edf2f7; font-family:Arial; padding:40px;}
+        .card { background:white; max-width:750px; margin:auto; padding:30px;
+            border-radius:12px; box-shadow:0 10px 20px rgba(0,0,0,.1); }
+        h1 {text-align:center}
+        table {width:100%; margin-top:20px; border-collapse:collapse;}
+        th,td {padding:10px; border-bottom:1px solid #ccc; text-align:center;}
+        th {background:#f1f1f1}
+        .long {color:green; font-weight:bold}
+        .short {color:red; font-weight:bold}
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <h1>📋 Nyitott pozíciók</h1>
+
+    <table th:if="${positions.size() > 0}">
+        <tr>
+            <th>Instrumentum</th>
+            <th>Irány</th>
+            <th>Mennyiség</th>
+            <th>Nyitó ár</th>
+        </tr>
+
+        <tr th:each="p : ${positions}">
+            <td th:text="${p.instrument}"></td>
+            <td th:text="${p.side}"
+                th:classappend="${p.side == 'LONG'} ? 'long' : 'short'"></td>
+            <td th:text="${p.units}"></td>
+            <td th:text="${p.openPrice}"></td>
+        </tr>
+    </table>
+
+    <div th:if="${positions.size() == 0}">
+        ❗ Nincs nyitott pozíció
+    </div>
+
+</div>
+
+</body>
+</html>
