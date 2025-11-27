@@ -84,11 +84,12 @@
             <th>Nyitó ár</th>
         </tr>
         <tr th:each="p : ${positions}">
+            <td th:text="${p.tradeId}"></td>
             <td th:text="${p.instrument}"></td>
-            <td th:classappend="${p.side == 'BUY' ? 'buy' : 'sell'}"
-                th:text="${p.side}"></td>
+            <td th:text="${p.side}"></td>
             <td th:text="${p.units}"></td>
             <td th:text="${p.openPrice}"></td>
+            <td th:text="${p.openTime}"></td>
         </tr>
     </table>
 
