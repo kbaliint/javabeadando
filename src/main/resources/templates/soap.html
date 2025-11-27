@@ -1,44 +1,93 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>MNB Árfolyamok</title>
+    <title>MNB árfolyam</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        body { font-family: Arial; padding: 30px; }
-        h1 { margin-top: 40px; }
-        table { border-collapse: collapse; width: 60%; margin-bottom: 40px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 40px;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            max-width: 800px;
+            margin: auto;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1 { text-align: center; margin-bottom: 20px; }
+        label { font-weight: bold; }
+        select, input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 15px;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 6px;
+        }
+        button:hover { background: #45a049; }
+        canvas { margin-top: 30px; }
     </style>
 </head>
-
 <body>
 
-<h1>Valuták</h1>
+<div class="card">
+    <h1>📈 MNB Árfolyam Lekérdezés (SOAP)</h1>
 
-<table>
-    <tr><th>Valuta kód</th></tr>
-    <tr th:each="c : ${currencies}">
-        <td th:text="${c}"></td>
-    </tr>
-</table>
+    <form method="get" action="/soap">
+        <label>Deviza:</label>
+        <select name="currency">
+            <option th:each="c : ${currencies}"
+                    th:value="${c}"
+                    th:text="${c}"
+                    th:selected="${c == param.currency}">
+            </option>
+        </select>
 
+        <label>Kezdő dátum:</label>
+        <input type="date" name="startDate" th:value="${param.startDate}"/>
 
-<h1>Mai árfolyamok</h1>
+        <label>Vége dátum:</label>
+        <input type="date" name="endDate" th:value="${param.endDate}"/>
 
-<table>
-    <tr>
-        <th>Valuta</th>
-        <th>Érték</th>
-        <th>Egység</th>
-    </tr>
+        <button type="submit">Grafikon rajzolása</button>
+    </form>
 
-    <tr th:each="r : ${rates}">
-        <td th:text="${r.currency}"></td>
-        <td th:text="${r.value}"></td>
-        <td th:text="${r.unit}"></td>
-    </tr>
-</table>
+    <canvas id="chart"></canvas>
+</div>
+
+<!-- Csak akkor generálja a JS-t, ha vannak adatok -->
+<script th:if="${chartLabels != null}" th:inline="javascript">
+    const labels = [[${chartLabels}]];
+    const values = [[${chartValues}]];
+
+    const ctx = document.getElementById('chart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Árfolyam',
+                data: values,
+                borderColor: 'blue',
+                fill: false,
+                tension: 0.2
+            }]
+        }
+    });
+</script>
+
 
 </body>
 </html>

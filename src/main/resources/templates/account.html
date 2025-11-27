@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Forex Account</title>
+
+    <style>
+        body {
+            background: #f4f7fa;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+        }
+
+        .card {
+            background: white;
+            max-width: 900px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .box {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .balance {
+            background: linear-gradient(to right, #4caf50, #2e7d32);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+            text-align: left;
+            padding: 12px;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f1f1f1;
+        }
+
+        .buy {
+            color: green;
+            font-weight: bold;
+        }
+
+        .sell {
+            color: red;
+            font-weight: bold;
+        }
+
+        .amount {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <h1>💼 Forex Account</h1>
+
+    <div class="info">
+        <div class="box">👤 Tulajdonos: <span th:text="${owner}"></span></div>
+        <div class="box">🏦 Számlaszám: <span th:text="${accountNumber}"></span></div>
+    </div>
+
+    <div class="balance">
+        💰 Egyenleg: <span th:text="${balance}"></span> <span th:text="${currency}"></span>
+    </div>
+
+    <h2>📅 Tranzakciók</h2>
+
+    <table>
+        <tr>
+            <th>Dátum</th>
+            <th>Típus</th>
+            <th>Deviza</th>
+            <th>Összeg</th>
+            <th>Egyenleg után</th>
+        </tr>
+
+        <tr th:each="t : ${transactions}">
+            <td th:text="${t.date}"></td>
+            <td th:text="${t.type}"
+                th:classappend="${t.type == 'VÉTEL' ? 'buy' : 'sell'}">
+            </td>
+            <td th:text="${t.currency}"></td>
+            <td class="amount" th:text="${t.amount}"></td>
+            <td class="amount" th:text="${t.balanceAfter} + ' HUF'"></td>
+        </tr>
+
+    </table>
+
+</div>
+
+</body>
+</html>
