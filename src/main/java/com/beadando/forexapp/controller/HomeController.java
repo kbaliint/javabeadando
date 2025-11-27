@@ -59,24 +59,6 @@ public class HomeController {
         return "soap";
     }
 
-    @GetMapping("/account")
-    public String accountPage(Model model) {
-
-        model.addAttribute("owner", "Bálint Forex Account");
-        model.addAttribute("accountNumber", "HU42-1234-5678-9999");
-        model.addAttribute("balance", 1542300);
-        model.addAttribute("currency", "HUF");
-
-        List<Transaction> transactions = List.of(
-                new Transaction("2025-11-20", "VÉTEL", "EUR", 200, 1500000),
-                new Transaction("2025-11-21", "ELADÁS", "USD", -100, 1530000),
-                new Transaction("2025-11-22", "VÉTEL", "GBP", 50, 1542300)
-        );
-
-        model.addAttribute("transactions", transactions);
-
-        return "account";
-    }
 
 
 }

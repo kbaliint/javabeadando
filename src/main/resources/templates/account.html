@@ -2,88 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>Forex Account</title>
+    <title>Forex Számla</title>
 
     <style>
-        body {
-            background: #f4f7fa;
-            font-family: Arial, sans-serif;
-            padding: 40px;
-        }
-
-        .card {
-            background: white;
-            max-width: 900px;
-            margin: auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .box {
-            background: #f9fafb;
-            padding: 15px;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-
-        .balance {
-            background: linear-gradient(to right, #4caf50, #2e7d32);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 22px;
-            margin-bottom: 30px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th {
-            background: #2c3e50;
-            color: white;
-            text-align: left;
-            padding: 12px;
-        }
-
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tr:hover {
-            background: #f1f1f1;
-        }
-
-        .buy {
-            color: green;
-            font-weight: bold;
-        }
-
-        .sell {
-            color: red;
-            font-weight: bold;
-        }
-
-        .amount {
-            text-align: right;
-        }
+        body { background:#f0f2f5; font-family: Arial; padding:40px; }
+        .card { background:white; max-width:900px; margin:auto; padding:25px; border-radius:15px }
+        table { width:100%; border-collapse: collapse; margin-top:20px }
+        th, td { border-bottom:1px solid #ddd; padding:10px; text-align:center }
+        h2 { margin-top:30px }
+        .balance { font-size:22px; font-weight:bold; }
+        .buy { color:green; font-weight:bold; }
+        .sell { color:red; font-weight:bold; }
     </style>
 </head>
 <body>
@@ -92,36 +21,42 @@
 
     <h1>💼 Forex Account</h1>
 
-    <div class="info">
-        <div class="box">👤 Tulajdonos: <span th:text="${owner}"></span></div>
-        <div class="box">🏦 Számlaszám: <span th:text="${accountNumber}"></span></div>
-    </div>
-
     <div class="balance">
-        💰 Egyenleg: <span th:text="${balance}"></span> <span th:text="${currency}"></span>
+        Egyenleg: <span th:text="${balance}"></span> <span th:text="${currency}"></span>
     </div>
 
-    <h2>📅 Tranzakciók</h2>
+    <h2>📌 Nyitott pozíciók</h2>
+    <table>
+        <tr>
+            <th>Instrument</th>
+            <th>Irány</th>
+            <th>Mennyiség</th>
+            <th>Nyitó ár</th>
+        </tr>
+        <tr th:each="p : ${positions}">
+            <td th:text="${p.instrument}"></td>
+            <td th:classappend="${p.side == 'BUY' ? 'buy' : 'sell'}"
+                th:text="${p.side}"></td>
+            <td th:text="${p.units}"></td>
+            <td th:text="${p.openPrice}"></td>
+        </tr>
+    </table>
 
+    <h2>📜 Tranzakciók</h2>
     <table>
         <tr>
             <th>Dátum</th>
-            <th>Típus</th>
-            <th>Deviza</th>
-            <th>Összeg</th>
-            <th>Egyenleg után</th>
+            <th>Instrument</th>
+            <th>Irány</th>
+            <th>Ár</th>
         </tr>
-
-        <tr th:each="t : ${transactions}">
+        <tr th:each="t : ${trades}">
             <td th:text="${t.date}"></td>
-            <td th:text="${t.type}"
-                th:classappend="${t.type == 'VÉTEL' ? 'buy' : 'sell'}">
-            </td>
-            <td th:text="${t.currency}"></td>
-            <td class="amount" th:text="${t.amount}"></td>
-            <td class="amount" th:text="${t.balanceAfter} + ' HUF'"></td>
+            <td th:text="${t.instrument}"></td>
+            <td th:classappend="${t.side == 'BUY' ? 'buy' : 'sell'}"
+                th:text="${t.side}"></td>
+            <td th:text="${t.price}"></td>
         </tr>
-
     </table>
 
 </div>

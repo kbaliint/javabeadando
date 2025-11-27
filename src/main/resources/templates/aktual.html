@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Forex Aktuális Ár</title>
+
+    <style>
+        body {
+            background: #edf2f7;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+        }
+
+        .card {
+            background: white;
+            max-width: 600px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #007bff;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result {
+            margin-top: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>💹 Forex Aktuális Ár</h1>
+
+    <form method="get" action="/aktual">
+
+        <label>Instrumentum:</label>
+        <select name="instrument">
+            <option th:each="i : ${instruments}"
+                    th:value="${i}"
+                    th:text="${i}"
+                    th:selected="${i == param.instrument}">
+            </option>
+        </select>
+
+        <button type="submit">Ár lekérése</button>
+    </form>
+
+    <div class="result" th:if="${price != null}">
+        📈 Aktuális ár:
+        <br>
+        <b th:text="${instrument}"></b> =
+        <b th:text="${price}"></b>
+
+        <div style="margin-top: 10px; font-size: 22px;">
+            <span th:if="${trend == 'up'}" style="color:green;">🔼 Emelkedik</span>
+            <span th:if="${trend == 'down'}" style="color:red;">🔽 Csökken</span>
+            <span th:if="${trend == 'flat'}" style="color:gray;">➖ Nincs változás</span>
+        </div>
+    </div>
+
+
+
+</div>
+
+</body>
+</html>
