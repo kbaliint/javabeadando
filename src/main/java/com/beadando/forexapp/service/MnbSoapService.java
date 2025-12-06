@@ -128,6 +128,11 @@ public class MnbSoapService {
     // =======================
     public String getRatesByDate(String startDate, String endDate, String currency) {
 
+        // HUF-RA NINCS SOAP -> FALLBACK
+        if ("HUF".equals(currency)) {
+            return buildFakeXml(startDate, endDate, currency);
+        }
+
         if (!soapAvailable) {
             return buildFakeXml(startDate, endDate, currency);
         }
@@ -143,6 +148,7 @@ public class MnbSoapService {
         }
     }
 
+
     // =======================
     // XML BASED PARSER
     // =======================
@@ -152,8 +158,7 @@ public class MnbSoapService {
         if (xml == null || xml.isEmpty()) return map;
 
         Pattern pattern = Pattern.compile(
-                "<Day date=\"(.*?)\">\\s*<Rate unit=\"\\d+\" curr=\".*?\">(.*?)</Rate>",
-                Pattern.DOTALL
+                "<Day date=\"(.*?)\">[\\s\\S]*?<Rate unit=\"\\d+\" curr=\".*?\">(.*?)</Rate>"
         );
 
         Matcher matcher = pattern.matcher(xml);
@@ -168,29 +173,34 @@ public class MnbSoapService {
         return map;
     }
 
+
     // =======================
     // FALLBACK ADATOK
     // =======================
     private Map<String, Double> getFallbackHistory(String currency) {
 
         Map<String, Double> map = new LinkedHashMap<>();
-        double base = getFallbackRate(currency);
+
+        double value = getFallbackRate(currency);
 
         for (int i = 0; i < 10; i++) {
-            map.put(LocalDate.now().minusDays(i).toString(), base + i);
+            map.put(LocalDate.now().minusDays(i).toString(), value);
         }
 
         return map;
     }
 
+
     private double getFallbackRate(String currency) {
         return switch (currency) {
+            case "HUF" -> 1.0;
             case "EUR" -> 390;
             case "USD" -> 360;
             case "GBP" -> 450;
             default -> 400;
         };
     }
+
 
     private String getFallbackCurrentRates() {
         return """
@@ -213,7 +223,7 @@ public class MnbSoapService {
                     .append("\"><Rate unit=\"1\" curr=\"")
                     .append(currency)
                     .append("\">")
-                    .append(getFallbackRate(currency) + i)
+                    .append(getFallbackRate(currency))
                     .append("</Rate></Day>");
         }
 

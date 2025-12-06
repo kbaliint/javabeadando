@@ -87,8 +87,9 @@
             <option th:each="c : ${currencies}"
                     th:value="${c}"
                     th:text="${c}"
-                    th:selected="${c == param.currency}">
+                    th:selected="${param.currency == null && c == 'EUR' || c == param.currency}">
             </option>
+
         </select>
 
         <label>Kezdő dátum:</label>
